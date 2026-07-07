@@ -1,30 +1,19 @@
-eskripsi Materi: Binary & Executable
-1. Definisi Dasar
-Binary (Biner) adalah representasi data paling dasar yang dipahami oleh prosesor (CPU), yang terdiri dari deretan angka 0 dan 1. Dalam konteks Reverse Engineering, istilah "Binary" sering merujuk pada Machine Code (kode mesin), yaitu instruksi spesifik arsitektur CPU (seperti x86 atau ARM) yang dieksekusi langsung oleh perangkat keras.
-Executable adalah sebuah file hasil kompilasi yang memiliki format struktur tertentu sehingga dapat dimuat oleh Sistem Operasi (Operating System) ke dalam memori untuk dijalankan sebagai program.
-2. Proses Terbentuknya Executable
-Untuk menjadi sebuah file executable, kode sumber (source code) melalui beberapa tahapan:
-Preprocessing: Penanganan direktif (seperti #include atau #define).
-Compiling: Mengubah kode sumber menjadi bahasa Assembly.
-Assembling: Mengubah bahasa Assembly menjadi kode mesin dalam bentuk object file (.obj atau .o).
-Linking: Tahap akhir di mana beberapa object file dan library digabungkan menjadi satu kesatuan file executable tunggal.
-3. Format File Executable Populer
-Setiap sistem operasi memiliki standar struktur file executable yang berbeda (Magic Header):
-PE (Portable Executable): Digunakan oleh Windows (Ekstensi .exe, .dll, .sys). Header-nya dimulai dengan karakter MZ.
-ELF (Executable and Linkable Format): Digunakan oleh Linux dan sistem berbasis Unix. Header-nya dimulai dengan byte 0x7F 45 4C 46 (.ELF).
-Mach-O: Digunakan oleh macOS dan iOS.
-4. Struktur Internal Executable
-Secara umum, sebuah file executable dibagi menjadi beberapa bagian utama (Sections):
-Header: Berisi metadata tentang file (arsitektur CPU, alamat awal instruksi/Entry Point, jumlah section).
-.text Section: Berisi instruksi kode mesin yang akan dieksekusi oleh CPU.
-.data Section: Berisi variabel global atau statis yang sudah diinisialisasi.
-.rsrc Section: Berisi sumber daya tambahan seperti ikon, gambar, atau menu (pada Windows).
-5. Konsep Penting: Endianness
-Dalam membaca binary, mahasiswa harus memahami bagaimana data disimpan di memori:
-Little Endian: Byte dengan nilai terkecil (Least Significant Byte) disimpan di alamat memori terendah. (Contoh: x86/x64).
-Big Endian: Byte dengan nilai terbesar (Most Significant Byte) disimpan di alamat memori terendah. (Contoh: Mainframe, beberapa arsitektur RISC).
-6. Relevansi dalam Reverse Engineering
-Reverse Engineering adalah proses membalikkan file executable (binary) kembali ke bentuk yang dapat dipahami manusia. Karena kode sumber asli biasanya tidak tersedia, praktisi menggunakan alat bantu:
-Disassembler: Mengubah binary menjadi bahasa Assembly (Contoh: IDA Pro, Ghidra).
-Decompiler: Mencoba mengubah binary kembali ke bahasa tingkat tinggi seperti C/C++ (Contoh: Hex-Rays).
-Hex Editor: Digunakan untuk melihat dan memodifikasi file dalam bentuk mentah hexadecimal (Contoh: HxD).
+📝 Jurnal Minggu 2: Anatomi Binary & Executable
+
+🧠 Apa yang Saya Pelajari Minggu Ini?
+
+Definisi Dasar: Saya belajar membedakan antara Binary (kode mesin murni berisi 0 dan 1 yang dieksekusi CPU) dan Executable (file hasil kompilasi berstruktur khusus yang dimuat oleh Sistem Operasi).
+
+Proses Kompilasi: Ternyata kode sumber yang kita tulis tidak langsung jadi .exe. Ada 4 tahap: Preprocessing, Compiling (menjadi Assembly), Assembling (menjadi object file .obj), dan terakhir Linking (menggabungkan library menjadi executable tunggal).
+
+Format & Struktur File: Saya mempelajari format PE (Portable Executable) untuk Windows yang selalu diawali dengan Magic Header "MZ", serta format ELF untuk Linux. Sebuah executable dibagi menjadi beberapa section, seperti .text untuk kode mesin, dan .data untuk variabel.
+
+🚧 Kendala yang Dihadapi
+
+Sesuai saran materi kelas, saya mencoba membuka file .exe sederhana menggunakan Hex Editor (HxD) untuk melihat bentuk mentahnya. Saya berhasil menemukan header "MZ". Namun, saat saya mencoba mencari sebuah nilai variabel integer (misalnya angka 1000 atau dalam hexadecimal adalah 0x000003E8) di bagian .data section, saya kebingungan. Saya mencari teks 00 00 03 E8 tapi tidak ketemu sama sekali, padahal saya yakin nilai itu ada di dalam program.
+
+💡 Solusi & Eksplorasi
+
+Setelah membaca ulang modul bagian "Konsep Penting: Endianness", saya baru menyadari jebakannya. Komputer dengan arsitektur x86/x64 tempat saya bekerja menggunakan sistem Little Endian.
+
+Dalam Little Endian, Byte dengan nilai terkecil (Least Significant Byte) akan disimpan di alamat memori terendah. Jadi, memori tidak menyimpannya sebagai 00 00 03 E8, melainkan dibaca terbalik per-byte menjadi E8 03 00 00. Setelah saya mencari susunan terbalik tersebut di Hex Editor, barulah nilainya ketemu! Ini adalah konsep fundamental yang sangat penting a
